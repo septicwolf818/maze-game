@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZSTIB Brzesko | MAZE-GAME</title>
+    <link rel="stylesheet" type="text/css"
+        href="http://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=latin,latin-ext" />
+    <link rel="stylesheet" href="style.css">
+    <script src="maze-generator.js"></script>
+    <script src="controller.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <div id="control">
+            <div id="list">Select commands</div>
+            <div id="options">
+                <div class="option" onclick="addTurnLeft()">&#8634;</div>
+                <div class="option" onclick="addTurnRight()">&#8635;</div>
+                <div class="option" onclick="addGoForward()">&#8594;</div>
+                <div class="option reset" onclick="reset()">&#10005;</div>
+                <div class="option run" onclick="run()">&#9166;</div>
+            </div>
+        </div>
+        <div id="show"></div>
+    </div>
+    </div>
+
+
+    <script>
+        maze = generateMaze(11, 11);
+        show();
+    </script>
+</body>
+
+</html>
