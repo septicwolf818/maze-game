@@ -41,21 +41,24 @@ function addGoForward() {
 }
 
 function reset() {
+    console.log("Reset...");
     steps = "";
     document.getElementById("list").innerHTML = "Select commands";
     character_y = 0;
     character_x = 0;
     character_dir = "right";
-    show();
 }
 
 
 async function show() {
+    console.log("Show...");
     localMaze = undefined;
-    Promise.resolve(maze).then((v) => {
+    await Promise.resolve(window.maze).then(async (v) => {
+        console.log("Resolve maze...");
         localMaze = v;
-        var show = document.getElementById("show");
-        show.innerHTML = "";
+        var showd = document.getElementById("show");
+        showd.innerHTML = "";
+        generateNewMaze = false;
         for (var y = 0; y < localMaze.length; y++) {
             for (var x = 0; x < localMaze[0].length; x++) {
                 if (localMaze[y][x] == "m") {
@@ -64,51 +67,66 @@ async function show() {
                     obj.dataset.y = y;
                     obj.dataset.x = x;
                     obj.dataset.type = "path";
-                    show.appendChild(obj);
+                    showd.appendChild(obj);
                 } else if (localMaze[y][x] == "w") {
                     var obj = document.createElement("div");
                     obj.classList.add("cell", "blue");
                     obj.dataset.y = y;
                     obj.dataset.x = x;
                     obj.dataset.type = "target";
-                    show.appendChild(obj);
+                    showd.appendChild(obj);
                 } else if (localMaze[y][x] == "y") {
                     var obj = document.createElement("div");
                     obj.classList.add("cell", "orange");
                     obj.dataset.y = y;
                     obj.dataset.x = x;
                     obj.dataset.type = "path";
-                    show.appendChild(obj);
+                    showd.appendChild(obj);
                 } else {
                     var obj = document.createElement("div");
                     obj.classList.add("cell", "black");
                     obj.dataset.y = y;
                     obj.dataset.x = x;
                     obj.dataset.type = "wall";
-                    show.appendChild(obj);
+                    showd.appendChild(obj);
                 }
-                if (show.lastChild.dataset.y == character_y && show.lastChild.dataset.x == character_x) {
-                    show.lastChild.style.backgroundImage = "url(\"assets/textures/character/" + character_dir + ".png\")";
-                    if (show.lastChild.dataset.type == "wall") {
+                if (showd.lastChild.dataset.y == character_y && showd.lastChild.dataset.x == character_x) {
+                    showd.lastChild.style.backgroundImage = "url(\"assets/textures/character/" + character_dir + ".png\")";
+                    if (showd.lastChild.dataset.type == "wall") {
                         window.alert("You have hit the wall! Try again!");
                         reset();
                     }
+
                     if (character_y == localMaze.length - 1 && character_x == localMaze[0].length - 1) {
                         window.alert("You have solved the maze! Congratulations!");
+                        generateNewMaze = true;
+                        generateNew();
                         reset();
-                        maze = generateMaze(11, 11);
+                        show();
+
                     }
                 }
             }
         }
-        show.firstChild.classList.add("orange");
-        show.lastChild.classList.add("orange");
+        if (!generateNewMaze) {
+            showd.firstChild.classList.add("orange");
+            showd.lastChild.classList.add("orange");
+        }
 
+    }).catch((d) => {
+        void(0);
     });
     await sleep(500);
 }
 
+
+async function generateNew() {
+    console.log("Generate new maze...");
+    window.maze = generateMaze(11, 11);
+}
+
 async function run() {
+    console.log("Run...");
     for (var i = 0; i < steps.length; i++) {
         var move = steps.charAt(i);
         switch (move) {
@@ -127,7 +145,7 @@ async function run() {
             case "f":
                 if (character_dir == "right") {
                     character_x++;
-                    Promise.resolve(maze).then((v) => {
+                    Promise.resolve(window.maze).then((v) => {
                         if (character_x > v[0].length - 1) {
                             window.alert("You went beyond the maze boundary!");
                             reset();
@@ -135,7 +153,7 @@ async function run() {
                     });
                 } else if (character_dir == "down") {
                     character_y++;
-                    Promise.resolve(maze).then((v) => {
+                    Promise.resolve(window.maze).then((v) => {
                         if (character_y > v.length - 1) {
                             window.alert("You went beyond the maze boundary!");
                             reset();
