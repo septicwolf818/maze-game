@@ -6,37 +6,43 @@ character_dir = "right";
 
 
 function addTurnLeft() {
+    var lst = document.getElementById("list");
     if (steps == "") {
-        document.getElementById("list").innerHTML = "";
+        lst.innerHTML = "";
     }
     steps += "l";
     var obj = document.createElement("div");
     obj.classList.add("instruction", "left");
     obj.innerHTML = "turnLeft()";
-    document.getElementById("list").appendChild(obj);
+    lst.appendChild(obj);
+    lst.scrollTop = lst.scrollHeight;
 
 }
 
 function addTurnRight() {
+    var lst = document.getElementById("list");
     if (steps == "") {
-        document.getElementById("list").innerHTML = "";
+        lst.innerHTML = "";
     }
     steps += "r";
     var obj = document.createElement("div");
     obj.classList.add("instruction", "right");
     obj.innerHTML = "turnRight()";
-    document.getElementById("list").appendChild(obj);
+    lst.appendChild(obj);
+    lst.scrollTop = lst.scrollHeight;
 }
 
 function addGoForward() {
+    var lst = document.getElementById("list");
     if (steps == "") {
-        document.getElementById("list").innerHTML = "";
+        lst.innerHTML = "";
     }
     steps += "f";
     var obj = document.createElement("div");
     obj.classList.add("instruction", "forward");
     obj.innerHTML = "goForward()";
-    document.getElementById("list").appendChild(obj);
+    lst.appendChild(obj);
+    lst.scrollTop = lst.scrollHeight;
 
 }
 
