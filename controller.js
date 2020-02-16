@@ -1,11 +1,12 @@
 steps = ""
-
+operate = false;
 character_y = 0;
 character_x = 0;
 character_dir = "right";
 
 
 function addTurnLeft() {
+    if (!operate) return null;
     if (steps == "") {
         document.getElementById("list").innerHTML = "";
     }
@@ -18,6 +19,7 @@ function addTurnLeft() {
 }
 
 function addTurnRight() {
+    if (!operate) return null;
     if (steps == "") {
         document.getElementById("list").innerHTML = "";
     }
@@ -29,6 +31,7 @@ function addTurnRight() {
 }
 
 function addGoForward() {
+    if (!operate) return null;
     if (steps == "") {
         document.getElementById("list").innerHTML = "";
     }
@@ -41,6 +44,7 @@ function addGoForward() {
 }
 
 function reset() {
+    if (!operate) return null;
     steps = "";
     document.getElementById("list").innerHTML = "Select commands";
     character_y = 0;
@@ -109,6 +113,13 @@ async function show() {
 }
 
 async function run() {
+    if (operate) {
+        operate = !operate;
+        var options = document.querySelectorAll(".option");
+        for (var i = 0; i < options.length; i++) {
+            options[i].classList.add("disabled");
+        }
+    } else return null;
     for (var i = 0; i < steps.length; i++) {
         var move = steps.charAt(i);
         switch (move) {
@@ -162,4 +173,9 @@ async function run() {
     character_y = 0;
     character_x = 0;
     character_dir = "right";
+    operate = !operate;
+    var options = document.querySelectorAll(".option");
+    for (var i = 0; i < options.length; i++) {
+        options[i].classList.remove("disabled");
+    }
 }

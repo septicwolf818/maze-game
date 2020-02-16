@@ -82,6 +82,19 @@ body {
     cursor: pointer;
 }
 
+.disabled {
+    border: 1px solid rgb(41, 41, 41);
+    background-color: rgb(138, 138, 138);
+    color: black;
+}
+
+.disabled:hover {
+    border: 1px solid rgb(41, 41, 41);
+    background-color: rgb(138, 138, 138);
+    color: black;
+    cursor: not-allowed;
+}
+
 #show {
     border-left: 1px solid rgb(209, 209, 209);
     width: 60%;

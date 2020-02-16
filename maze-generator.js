@@ -170,7 +170,7 @@ async function generateMaze(width, height) {
             }
         }
     }
-
+    operate = true;
     return maze;
 
 }
