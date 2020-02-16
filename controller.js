@@ -111,6 +111,7 @@ async function show() {
                     if (character_y == localMaze.length - 1 && character_x == localMaze[0].length - 1) {
                         window.alert("You have solved the maze! Congratulations!");
                         generateNewMaze = true;
+                        steps = "";
                         generateNew();
                         reset();
                         show();
