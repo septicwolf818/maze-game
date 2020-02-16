@@ -57,6 +57,7 @@ function reset() {
     character_y = 0;
     character_x = 0;
     character_dir = "right";
+    show();
 }
 
 
