@@ -2,6 +2,7 @@ let selected_x = 0;
 let selected_y = 0;
 
 async function sleep(ms) {
+
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -26,7 +27,7 @@ function isConnected(maze, y, x) {
 }
 
 async function generateMaze(width, height) {
-
+    console.log("Generate maze...");
     let maze = [];
     let walls = [];
 
