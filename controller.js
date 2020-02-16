@@ -105,7 +105,9 @@ async function show() {
                     showd.lastChild.style.backgroundImage = "url(\"assets/textures/character/" + character_dir + ".png\")";
                     if (showd.lastChild.dataset.type == "wall") {
                         window.alert("You have hit the wall! Try again!");
+                        operate = true;
                         reset();
+                        operate = false;
                     }
 
                     if (character_y == localMaze.length - 1 && character_x == localMaze[0].length - 1) {
