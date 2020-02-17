@@ -171,7 +171,9 @@ async function run() {
                     Promise.resolve(window.maze).then((v) => {
                         if (character_x > v[0].length - 1) {
                             window.alert("You went beyond the maze boundary!");
+                            operate = true;
                             reset();
+                            operate = false;
                         }
                     });
                 } else if (character_dir == "down") {
@@ -179,7 +181,9 @@ async function run() {
                     Promise.resolve(window.maze).then((v) => {
                         if (character_y > v.length - 1) {
                             window.alert("You went beyond the maze boundary!");
+                            operate = true;
                             reset();
+                            operate = false;
                         }
                     });
 
@@ -187,13 +191,17 @@ async function run() {
                     character_x--;
                     if (character_x < 0) {
                         window.alert("You went beyond the maze boundary!");
+                        operate = true;
                         reset();
+                        operate = false;
                     }
                 } else if (character_dir == "up") {
                     character_y--;
                     if (character_y < 0) {
                         window.alert("You went beyond the maze boundary!");
+                        operate = true;
                         reset();
+                        operate = false;
                     }
                 }
                 break;
