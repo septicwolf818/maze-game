@@ -110,6 +110,7 @@ body {
     height: 9.09%;
     float: left;
     image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
