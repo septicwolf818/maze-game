@@ -58,9 +58,6 @@ class MazeRunner {
         document.getElementById("list").innerHTML = "Select commands";
         state.character = { y: 0, x: 0, dir: "right" };
         this.unblock();
-        document.querySelectorAll(".option").forEach((option) => {
-            option.classList.remove("disabled");
-        });
 
     }
 
@@ -73,9 +70,6 @@ class MazeRunner {
     async run() {
         if (!this.state.blocked) {
             this.block();
-            document.querySelectorAll(".option").forEach((option) => {
-                option.classList.add("disabled");
-            });
         } else return null;
 
         console.log("Run...");
