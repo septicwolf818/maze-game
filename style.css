@@ -12,9 +12,8 @@ body {
 }
 
 #container {
-    width: 100%;
-    height: 100%;
-    float: left;
+    display: flex;
+    height: 100vh;
 }
 
 #control {
@@ -22,7 +21,7 @@ body {
     width: 40%;
     height: 100%;
     padding: 10px;
-    float: left;
+    overflow-y: auto;
 }
 
 #list {
@@ -37,62 +36,62 @@ body {
     text-align: center;
     color: rgb(161, 161, 161);
     font-size: 20px;
-    text-align: center;
+}
+
+#options {
+    display: flex;
+    flex-direction: row;
 }
 
 .option {
     color: white;
-    float: left;
     text-align: center;
     border: 1px solid rgb(32, 131, 32);
-    width: calc(20% - 2px);
+    width: 20%;
     padding: 10px;
     background-color: rgb(37, 155, 37);
     text-transform: uppercase;
     height: 50px;
     line-height: 30px;
+    cursor: pointer;
+    user-select: none;
 }
 
 .option:hover {
     background-color: rgb(45, 185, 45);
-    user-select: none;
-    cursor: pointer;
 }
 
-.reset {
-    border: 1px solid rgb(131, 32, 32);
-    background-color: rgb(155, 37, 37);
-}
-
-.reset:hover {
-    background-color: rgb(185, 45, 45);
-    user-select: none;
-    cursor: pointer;
-}
-
-.run {
+.option.disabled {
+    border: 1px solid rgb(41, 41, 41);
+    background-color: rgb(138, 138, 138);
     color: black;
-    border: 1px solid rgb(212, 138, 0);
-    background-color: orange;
-}
-
-.run:hover {
-    background-color: rgb(255, 196, 0);
-    user-select: none;
-    cursor: pointer;
+    cursor: not-allowed;
 }
 
 .disabled {
     border: 1px solid rgb(41, 41, 41);
     background-color: rgb(138, 138, 138);
     color: black;
+    cursor: not-allowed;
 }
 
-.disabled:hover {
-    border: 1px solid rgb(41, 41, 41);
-    background-color: rgb(138, 138, 138);
+#reset {
+    border: 1px solid rgb(131, 32, 32);
+    background-color: rgb(155, 37, 37);
+}
+
+#reset:hover {
+    background-color: rgb(185, 45, 45);
+}
+
+#run {
     color: black;
-    cursor: not-allowed;
+    border: 1px solid rgb(212, 138, 0);
+    background-color: orange;
+}
+
+#run:hover {
+    background-color: rgb(255, 196, 0);
 }
 
 #show {
@@ -100,7 +99,8 @@ body {
     width: 60%;
     height: 100%;
     padding: 10px;
-    float: left;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .cell {
@@ -108,28 +108,35 @@ body {
     border: 3px dashed rgba(0, 0, 0, .1);
     width: 9.09%;
     height: 9.09%;
-    float: left;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
+
+    /* DISABLE ANTIALIASING */
+    image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
+    image-rendering: -moz-crisp-edges;          /* Firefox                        */
+    image-rendering: -o-crisp-edges;            /* Opera                          */
+    image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+    image-rendering: pixelated;                 /* Universal support since 2021   */
+    image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+    -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
 }
 
-.black {
+.wall {
     background-color: black;
 }
 
-.green {
-    background-color: green;
+.path {
+    background-color: rgb(192, 181, 65);
 }
 
-.blue {
-    background-color: blue;
+.target {
+    background-color: red;
 }
 
-.orange {
-    background-color: orange;
+.safepoint {
+    background-color: #41ff11;
 }
 
 .instruction {
@@ -140,6 +147,7 @@ body {
     line-height: 20px;
     color: white;
     padding: 10px;
+    font-family: monospace;
 }
 
 .left {
