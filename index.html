@@ -9,8 +9,11 @@
         href="http://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=latin,latin-ext" />
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="assets/icon/icon.png" type="image/png">
-    <script src="maze-generator.js"></script>
-    <script src="controller.js"></script>
+    <script src="maze_generator.js"></script>
+    <script src="maze_runner.js"></script>
+    <script>
+
+    </script>
 </head>
 
 <body>
@@ -18,21 +21,28 @@
         <div id="control">
             <div id="list">Select commands</div>
             <div id="options">
-                <div class="option" onclick="addTurnLeft()">&#8634;</div>
-                <div class="option" onclick="addTurnRight()">&#8635;</div>
-                <div class="option" onclick="addGoForward()">&#8594;</div>
-                <div class="option reset" onclick="reset()">&#10005;</div>
-                <div class="option run" onclick="run()">&#9166;</div>
+                <div id="left" class="option">&#8634;</div>
+                <div id="right" class="option">&#8635;</div>
+                <div id="forward" class="option">&#8594;</div>
+                <div id="reset" class="option reset">&#10005;</div>
+                <div id="run" class="option run">&#9166;</div>
             </div>
         </div>
         <div id="show"></div>
     </div>
-    </div>
-
 
     <script>
-        window.maze = generateMaze(11, 11);
-        show();
+        const state = {
+            blocked: false,
+            character: {
+                y: 0,
+                x: 0,
+                dir: "right",
+            },
+            steps: ""
+        };
+        const mazeGenerator = new MazeGenerator(state);
+        const mazeRunner = new MazeRunner(mazeGenerator);
     </script>
 </body>
 
