@@ -132,18 +132,19 @@ class MazeRunner {
                 this.state.character.y >= maze.length
             ) {
                 window.alert("You went beyond the maze boundary! Try again!");
+                this.unblock();
                 this.reset();
             }
             else if (maze[this.state.character.y][this.state.character.x] == "i") {
                 window.alert("You have hit the wall! Try again!");
+                this.unblock();
                 this.reset();
             }
             else if (this.state.character.y == maze.length - 1 && this.state.character.x == maze[0].length - 1) {
                 window.alert("You have solved the maze! Congratulations!");
-                this.block()
+                this.unblock();
                 this.reset();
                 this.generateNew();
-                this.unblock();
             }
         });
     }
