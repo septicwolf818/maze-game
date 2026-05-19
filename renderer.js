@@ -2,7 +2,6 @@ class Renderer {
     constructor() {
         this.container = document.getElementById('maze');
         this.cells = [];
-        this.prevCharPos = null;
     }
 
     render(maze, character, enemies) {
@@ -25,10 +24,10 @@ class Renderer {
             }
         }
 
-        const ec = new Set();
+        const enemyMap = new Map();
         if (enemies) {
             for (const e of enemies) {
-                ec.add(`${e.x},${e.y}`);
+                enemyMap.set(`${e.x},${e.y}`, e);
             }
         }
 
@@ -38,9 +37,13 @@ class Renderer {
             const cell = this.cells[i];
             const val = maze[y][x];
             const hasChar = character && character.x === x && character.y === y;
-            const hasEnemy = ec.has(`${x},${y}`);
+            const enemy = enemyMap.get(`${x},${y}`);
 
             cell.className = 'cell';
+            cell.innerHTML = '';
+            cell.removeAttribute('data-enemy-type');
+            cell.removeAttribute('data-enemy-dir');
+            cell.style.backgroundImage = '';
 
             if (val === CELL.WALL) {
                 cell.classList.add('wall');
@@ -56,11 +59,22 @@ class Renderer {
                 cell.classList.add('char');
                 cell.style.backgroundImage =
                     `url("assets/textures/character/${character.dir}.png")`;
-            } else if (hasEnemy) {
+            }
+
+            if (enemy) {
                 cell.classList.add('enemy');
-                cell.style.backgroundImage = '';
-            } else {
-                cell.style.backgroundImage = '';
+                cell.dataset.enemyType = enemy.type;
+                cell.dataset.enemyDir = enemy.dir;
+
+                const dirIcon = document.createElement('i');
+                const iconMap = {
+                    up: 'fa-arrow-up',
+                    down: 'fa-arrow-down',
+                    left: 'fa-arrow-left',
+                    right: 'fa-arrow-right',
+                };
+                dirIcon.className = 'fa-solid ' + (iconMap[enemy.dir] || 'fa-question');
+                cell.appendChild(dirIcon);
             }
         }
     }

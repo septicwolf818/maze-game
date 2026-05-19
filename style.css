@@ -155,10 +155,11 @@ html, body {
     flex-wrap: wrap;
     width: min(70vmin, 520px);
     aspect-ratio: 1;
-    border: 2px solid var(--border);
-    border-radius: 4px;
+    border: 2px solid var(--accent);
+    border-radius: 6px;
     overflow: hidden;
     background: #000;
+    box-shadow: 0 0 20px rgba(212, 160, 65, 0.08), 0 0 60px rgba(212, 160, 65, 0.03);
 }
 
 .cell {
@@ -169,15 +170,49 @@ html, body {
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.cell.wall  { background-color: #111; }
-.cell.path  { background-color: #c8b062; }
+.cell.wall  { background-color: #1e1e2e; }
+.cell.path  { background-color: #d4b04a; }
 .cell.start { background-color: #50c040; }
 .cell.end   { background-color: #50c040; }
-.cell.enemy { background-color: #d03040; }
-.cell.char  { background-color: #c8b062; }
-.cell.char.enemy { background-color: var(--danger); }
+.cell.char  { background-color: #d4b04a; }
+
+/* Enemy type colors */
+
+.cell.enemy {
+    position: relative;
+}
+
+.cell.enemy i {
+    font-size: 11px;
+    color: #fff;
+    text-shadow: 0 0 4px rgba(0,0,0,0.8);
+}
+
+.cell.enemy[data-enemy-type="patrol"] {
+    background-color: #c83040;
+}
+
+.cell.enemy[data-enemy-type="chaser"] {
+    background-color: #c08030;
+}
+
+.cell.enemy[data-enemy-type="random"] {
+    background-color: #3070a0;
+}
+
+.cell.char.enemy {
+    background-color: var(--danger);
+}
+
+.cell.char.enemy i {
+    display: none;
+}
 
 /* ── Program area ────────────────────────── */
 
@@ -244,8 +279,6 @@ html, body {
     min-width: 0;
 }
 
-/* Repeat block */
-
 .block-instance.is-repeat {
     border-color: #5a4030;
     background: #181410;
@@ -297,8 +330,6 @@ html, body {
     text-align: center;
 }
 
-/* Target of a repeat (child block) */
-
 .children {
     width: 100%;
     margin-top: 6px;
@@ -311,8 +342,6 @@ html, body {
     border-left: 2px solid var(--accent);
     background: #161412;
 }
-
-/* Remove button */
 
 .remove-block {
     width: 22px;

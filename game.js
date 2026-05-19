@@ -102,10 +102,10 @@ class Game {
                 }
             }
 
-            this.enemyManager.update(this.maze);
+            this.enemyManager.update(this.maze, this.character);
 
             this.renderer.render(this.maze, this.character, this.enemyManager.enemies);
-            await this.sleep(250);
+            await this.sleep(300);
 
             if (this.enemyManager.checkCollision(this.character)) {
                 this.setStatus('Caught by an enemy!', 'error');

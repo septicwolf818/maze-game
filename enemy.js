@@ -28,19 +28,20 @@ class EnemyManager {
             return p;
         };
 
+        const types = ['patrol', 'chaser', 'random'];
         const chosen = Math.min(count, pathCells.length);
         for (let i = 0; i < chosen; i++) {
             const pos = pick();
             if (!pos) break;
-            const enemy = new Enemy(pos.x, pos.y);
+            const enemy = new Enemy(pos.x, pos.y, types[i % types.length]);
             enemy.buildPatrolRoute(maze);
             this.enemies.push(enemy);
         }
     }
 
-    update(maze) {
+    update(maze, character) {
         for (const enemy of this.enemies) {
-            enemy.move(maze);
+            enemy.move(maze, character);
         }
     }
 
@@ -50,9 +51,10 @@ class EnemyManager {
 }
 
 class Enemy {
-    constructor(x, y) {
+    constructor(x, y, type) {
         this.x = x;
         this.y = y;
+        this.type = type || 'patrol';
         this.dir = 'right';
         this.waypoints = [{ x, y }];
         this.waypointIndex = 0;
@@ -80,11 +82,7 @@ class Enemy {
             const endX = this.x + dx * steps;
             const endY = this.y + dy * steps;
             if (steps >= 2 && (endX !== this.x || endY !== this.y)) {
-                const route = [
-                    { x: this.x, y: this.y },
-                    { x: endX, y: endY },
-                ];
-                this.waypoints = route;
+                this.waypoints = [{ x: this.x, y: this.y }, { x: endX, y: endY }];
                 this.waypointIndex = 0;
                 return;
             }
@@ -108,7 +106,17 @@ class Enemy {
         }
     }
 
-    move() {
+    move(maze, character) {
+        if (this.type === 'patrol') {
+            this.movePatrol();
+        } else if (this.type === 'chaser') {
+            this.moveChaser(maze, character);
+        } else if (this.type === 'random') {
+            this.moveRandom(maze);
+        }
+    }
+
+    movePatrol() {
         const target = this.waypoints[this.waypointIndex];
         if (!target) return;
 
@@ -126,5 +134,74 @@ class Enemy {
         if (this.x === target.x && this.y === target.y) {
             this.waypointIndex = (this.waypointIndex + 1) % this.waypoints.length;
         }
+    }
+
+    moveRandom(maze) {
+        const dirs = [
+            [0, -1, 'up'], [0, 1, 'down'], [-1, 0, 'left'], [1, 0, 'right'],
+        ];
+        const available = dirs.filter(([dy, dx]) => {
+            const nx = this.x + dx;
+            const ny = this.y + dy;
+            return (
+                ny >= 0 && ny < maze.length &&
+                nx >= 0 && nx < maze[0].length &&
+                maze[ny][nx] === CELL.PATH
+            );
+        });
+
+        if (available.length === 0) return;
+        const [dy, dx, dir] = available[Math.floor(Math.random() * available.length)];
+        this.dir = dir;
+        this.x += dx;
+        this.y += dy;
+    }
+
+    moveChaser(maze, character) {
+        if (!character) { this.moveRandom(maze); return; }
+
+        const dist = Math.abs(this.x - character.x) + Math.abs(this.y - character.y);
+
+        if (dist > 4) {
+            this.movePatrol();
+            return;
+        }
+
+        const dirs = [
+            { dy: 0, dx: 1, name: 'right' },
+            { dy: 0, dx: -1, name: 'left' },
+            { dy: 1, dx: 0, name: 'down' },
+            { dy: -1, dx: 0, name: 'up' },
+        ];
+
+        const shuffled = [...dirs].sort(() => Math.random() - 0.5);
+        const preferred = [...shuffled].sort((a, b) => {
+            const da = Math.abs(this.x + a.dx - character.x) + Math.abs(this.y + a.dy - character.y);
+            const db = Math.abs(this.x + b.dx - character.x) + Math.abs(this.y + b.dy - character.y);
+            return da - db;
+        });
+
+        for (const d of preferred) {
+            const nx = this.x + d.dx;
+            const ny = this.y + d.dy;
+            if (
+                ny >= 0 && ny < maze.length &&
+                nx >= 0 && nx < maze[0].length &&
+                maze[ny][nx] === CELL.PATH
+            ) {
+                this.dir = d.name;
+                this.x = nx;
+                this.y = ny;
+                return;
+            }
+        }
+    }
+
+    static isPath(maze, x, y) {
+        return (
+            y >= 0 && y < maze.length &&
+            x >= 0 && x < maze[0].length &&
+            maze[y][x] === CELL.PATH
+        );
     }
 }
