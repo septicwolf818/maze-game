@@ -1,49 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZSTIB Brzesko | MAZE-GAME</title>
-    <link rel="stylesheet" type="text/css"
-        href="http://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=latin,latin-ext" />
+    <title>Maze Runner</title>
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="assets/icon/icon.png" type="image/png">
-    <script src="maze_generator.js"></script>
-    <script src="maze_runner.js"></script>
-    <script>
-
-    </script>
 </head>
-
 <body>
-    <div id="container">
-        <div id="control">
-            <div id="list">Select commands</div>
-            <div id="options">
-                <div id="left" class="option">&#8634;</div>
-                <div id="right" class="option">&#8635;</div>
-                <div id="forward" class="option">&#8594;</div>
-                <div id="reset" class="option reset">&#10005;</div>
-                <div id="run" class="option run">&#9166;</div>
+    <div id="app">
+        <header id="topbar">
+            <h1>MAZE RUNNER</h1>
+            <div id="status-bar">
+                <span id="status-msg">Generating maze...</span>
             </div>
-        </div>
-        <div id="show"></div>
+            <div id="top-actions">
+                <button id="runBtn" class="btn btn-run">▶ Run</button>
+                <button id="resetBtn" class="btn btn-reset">⟲ Reset</button>
+                <button id="newMazeBtn" class="btn btn-new">✦ New</button>
+            </div>
+        </header>
+        <main id="main">
+            <section id="maze-panel">
+                <div id="maze"></div>
+            </section>
+            <section id="builder-panel">
+                <div id="block-palette">
+                    <button class="block-btn forward" data-block="forward">↑ Forward</button>
+                    <button class="block-btn left" data-block="turnLeft">↰ Left</button>
+                    <button class="block-btn right" data-block="turnRight">↱ Right</button>
+                    <button class="block-btn repeat" data-block="repeat">⟳ Loop</button>
+                </div>
+                <div id="scope-indicator">
+                    Adding to: <span id="scope-label">Program</span>
+                </div>
+                <div id="program-area">
+                    <div id="program-list"></div>
+                    <div id="program-placeholder">Add blocks to build your path</div>
+                </div>
+            </section>
+        </main>
     </div>
-
+    <script src="maze_generator.js"></script>
+    <script src="enemy.js"></script>
+    <script src="renderer.js"></script>
+    <script src="path_builder.js"></script>
+    <script src="game.js"></script>
     <script>
-        const state = {
-            blocked: false,
-            character: {
-                y: 0,
-                x: 0,
-                dir: "right",
-            },
-            steps: ""
-        };
-        const mazeGenerator = new MazeGenerator(state);
-        const mazeRunner = new MazeRunner(mazeGenerator);
+        window.game = new Game();
     </script>
 </body>
-
 </html>

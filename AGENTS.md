@@ -4,15 +4,27 @@ Vanilla JS maze game. No build, no tests, no dependencies. Open `index.html` in 
 
 ## Architecture
 
-- `maze_generator.js` — `MazeGenerator` class: randomized Prim's algorithm, always 11×11 (hardcoded at `maze_runner.js:11`), renders via DOM.
-- `maze_runner.js` — `MazeRunner` class: accepts move strings (`l`/`r`/`f`), executes them step-by-step with animation.
-- `style.css` — grid layout, cell types (wall/path/target/safepoint), pixel-art rendering.
-- No bundler, no modules (ES6 classes via `<script>` tags), no npm.
+- `game.js` — `Game` class orchestrates everything (state, loop, coord between components).
+- `maze_generator.js` — `MazeGenerator` class: randomized Prim's algorithm, always 11×11, calls `onFrame` callback to animate generation.
+- `renderer.js` — `Renderer` class: renders maze grid, character sprite, enemies via DOM. Rebuilds cells once then updates classes in place.
+- `path_builder.js` — `PathBuilder` class: visual block-based programming (Forward/TurnLeft/TurnRight/Repeat). Compiles blocks to command string (`l`/`r`/`f`).
+- `enemy.js` — `EnemyManager` + `Enemy` classes: places enemies on path cells, each patrols by walking along paths until blocked then picks a new direction.
+- `style.css` — Dark theme, `--bg`/`--surface`/`--accent` CSS vars, pixel-art cell rendering.
+- No bundler, no modules (ES6 classes via `<script>` tags in order), no npm.
 
 ## Key quirks
 
-- `window.maze` is a **Promise** wrapping the generated maze array — `checkState()` awaits it via `.then()`.
+- **Script load order matters** in `index.html`: `maze_generator.js` → `enemy.js` → `renderer.js` → `path_builder.js` → `game.js`. `CELL` constant must be defined before `EnemyManager`/`Renderer`.
+- `window.game` is a global `Game` instance created after all scripts load.
+- Maze generation is animated — `generate()` calls `onFrame(grid)` after each wall-carve step.
 - Character textures: `assets/textures/character/{right,left,up,down}.png`.
 - Move encoding: `l` = turn left, `r` = turn right, `f` = go forward.
-- Character starts at `(0,0)` facing `right`; goal is `(10,10)` (bottom-right of 11×11 grid).
-- `state.blocked` flag disables all controls during execution.
+- Character starts at `(0,0)` facing `right`; goal is `(10,10)`.
+- `Game.blocked` disables all controls during execution.
+- Enemies only patrol on `CELL.PATH` cells (value `1`), never on start/end/walls.
+- Collisions are checked **after** player command + enemy movement each turn.
+
+## Commands
+
+- Run: open `index.html` in browser. No server required.
+- No tests, no linter, no formatter, no CI.
