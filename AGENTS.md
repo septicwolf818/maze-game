@@ -8,7 +8,7 @@
 - `maze_generator.js` — `MazeGenerator` class: randomized Prim's algorithm, always 11×11, calls `onFrame` callback to animate generation.
 - `renderer.js` — `Renderer` class: renders maze grid, character sprite, enemies via DOM. Rebuilds cells once then updates classes in place.
 - `path_builder.js` — `PathBuilder` class: visual block-based programming (Forward/TurnLeft/TurnRight/Wait/Repeat). Flat list — Repeat targets the block after it. Compiles blocks to command string (`l`/`r`/`f`/`w`).
-- `enemy.js` — `EnemyManager` + `Enemy` classes: places enemies on path cells, each patrols a fixed back-and-forth route (predictable, always beatable). Three types: `patrol` (red, walks waypoints), `chaser` (orange, pursues within 4 cells), `random` (blue, random walk). Direction arrow shown on every enemy cell.
+- `enemy.js` — `EnemyManager` + `Enemy` classes: places enemies on path cells, each patrols a fixed back-and-forth route (predictable, always beatable). Three types: `patrol` (red, walks waypoints), `chaser` (orange, pursues within 4 cells with Bresenham line-of-sight), `random` (blue, random walk). Direction arrow shown on every enemy cell.
 - `style.css` — Dark theme, `--bg`/`--surface`/`--accent` CSS vars, pixel-art cell rendering. Enemy type colors, direction arrow overlay.
 - No bundler, no modules (ES6 classes via `<script>` tags in order), no npm.
 

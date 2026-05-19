@@ -162,7 +162,7 @@ class Enemy {
 
         const dist = Math.abs(this.x - character.x) + Math.abs(this.y - character.y);
 
-        if (dist > 4) {
+        if (dist > 4 || !this.hasLineOfSight(maze, character)) {
             this.movePatrol();
             return;
         }
@@ -195,6 +195,33 @@ class Enemy {
                 return;
             }
         }
+    }
+
+    hasLineOfSight(maze, player) {
+        const dx = player.x - this.x;
+        const dy = player.y - this.y;
+        const adx = Math.abs(dx);
+        const ady = Math.abs(dy);
+        const sx = dx < 0 ? -1 : 1;
+        const sy = dy < 0 ? -1 : 1;
+        let err = adx - ady;
+        let cx = this.x;
+        let cy = this.y;
+
+        while (cx !== player.x || cy !== player.y) {
+            const e2 = 2 * err;
+            if (e2 > -ady) {
+                err -= ady;
+                cx += sx;
+            }
+            if (e2 < adx) {
+                err += adx;
+                cy += sy;
+            }
+            if (cx === player.x && cy === player.y) break;
+            if (maze[cy][cx] === CELL.WALL) return false;
+        }
+        return true;
     }
 
     static isPath(maze, x, y) {
