@@ -18,7 +18,10 @@ class Game {
         this.blockBtns = document.querySelectorAll('.block-btn');
 
         this.runBtn.addEventListener('click', () => this.run());
-        this.resetBtn.addEventListener('click', () => this.reset());
+        this.resetBtn.addEventListener('click', () => {
+            this.pathBuilder.clear();
+            this.resetState();
+        });
         this.newMazeBtn.addEventListener('click', () => this.generateNew());
 
         for (const btn of this.blockBtns) {
@@ -26,6 +29,14 @@ class Game {
                 this.pathBuilder.addBlock(btn.dataset.block);
             });
         }
+
+        this.expandBtn = document.getElementById('expandBtn');
+        this.expandBtn.addEventListener('click', () => {
+            document.getElementById('app').classList.toggle('builder-expanded');
+            const icon = this.expandBtn.querySelector('i');
+            icon.className = icon.classList.contains('fa-expand')
+                ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
+        });
 
         this.generateNew();
     }
@@ -38,7 +49,6 @@ class Game {
     setBlocked(blocked) {
         this.blocked = blocked;
         this.runBtn.disabled = blocked;
-        this.resetBtn.disabled = blocked;
         this.newMazeBtn.disabled = blocked;
         for (const btn of this.blockBtns) {
             btn.disabled = blocked;
@@ -86,6 +96,7 @@ class Game {
 
         for (let i = 0; i < commands.length; i++) {
             if (this.stopped) break;
+            this.pathBuilder.highlightCommand(i);
             const cmd = commands[i];
 
             if (cmd === 'l' || cmd === 'r') {
@@ -94,9 +105,11 @@ class Game {
                 const hit = this.moveForward();
                 if (hit === 'wall' || hit === 'boundary') {
                     this.setStatus('Hit a wall!', 'error');
+                    document.getElementById('maze').classList.add('shake');
                     await this.sleep(300);
+                    document.getElementById('maze').classList.remove('shake');
                     this.renderer.render(this.maze, this.character, this.enemyManager.enemies);
-                    await this.sleep(600);
+                    await this.sleep(2000);
                     this.stop('wall');
                     break;
                 }
@@ -104,12 +117,19 @@ class Game {
 
             this.enemyManager.update(this.maze, this.character);
 
+            const chasing = this.enemyManager.enemies.some(e => e.chasing);
+            if (chasing) {
+                this.setStatus('Chaser is hunting you!', 'active');
+            } else {
+                this.setStatus('Running...', 'active');
+            }
+
             this.renderer.render(this.maze, this.character, this.enemyManager.enemies);
             await this.sleep(300);
 
             if (this.enemyManager.checkCollision(this.character)) {
                 this.setStatus('Caught by an enemy!', 'error');
-                await this.sleep(600);
+                await this.sleep(2000);
                 this.stop('enemy');
                 break;
             }
@@ -118,14 +138,14 @@ class Game {
             const w = this.maze[0].length;
             if (this.character.x === w - 1 && this.character.y === h - 1) {
                 this.setStatus('You solved the maze!', 'win');
-                await this.sleep(1200);
+                await this.sleep(2000);
                 this.generateNew();
                 return;
             }
         }
 
         if (!this.stopped) {
-            this.reset();
+            this.resetState();
         }
     }
 
@@ -165,16 +185,17 @@ class Game {
 
     stop(reason) {
         this.stopped = true;
+        this.pathBuilder.highlightCommand(-1);
         if (reason) {
             setTimeout(() => {
-                this.reset();
-            }, 1000);
+                this.resetState();
+            }, 2000);
         } else {
-            this.reset();
+            this.resetState();
         }
     }
 
-    reset() {
+    resetState() {
         this.character = { x: 0, y: 0, dir: 'right' };
         this.stopped = true;
         this.setBlocked(false);

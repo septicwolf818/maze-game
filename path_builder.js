@@ -72,19 +72,46 @@ class PathBuilder {
         this.onChange();
     }
 
+    highlightCommand(index) {
+        this.render(index);
+    }
+
+    _countCommands(blocks) {
+        let n = 0;
+        for (const b of blocks) {
+            if (b.type === 'repeat') {
+                n += b.count * this._countCommands(b.blocks);
+            } else {
+                n += 1;
+            }
+        }
+        return n;
+    }
+
     /* ── Rendering ──────────────────────── */
 
-    render() {
+    render(highlightIndex) {
         this.container.innerHTML = '';
-        this._renderBlocks(this.blocks, this.container, false);
+        this._renderBlocks(this.blocks, this.container, false, 0, highlightIndex);
         this.placeholder.style.display = this.blocks.length ? 'none' : 'flex';
     }
 
-    _renderBlocks(blocks, parentEl, nested) {
+    _renderBlocks(blocks, parentEl, nested, startIdx, highlightIdx) {
+        let offset = startIdx;
         for (let i = 0; i < blocks.length; i++) {
             const b = blocks[i];
+            const rangeStart = offset;
+            const cmdCount = b.type === 'repeat'
+                ? b.count * this._countCommands(b.blocks)
+                : 1;
+            const rangeEnd = offset + cmdCount;
+            offset = rangeEnd;
+
             const el = document.createElement('div');
             el.className = 'block-instance' + (nested ? ' nested' : '');
+
+            const isActive = highlightIdx !== undefined && highlightIdx >= rangeStart && highlightIdx < rangeEnd;
+            if (isActive) el.classList.add('is-active');
 
             /* drag start via closure (captures blocks, i, el, parentEl) */
             const onDown = (e) => {
@@ -137,7 +164,11 @@ class PathBuilder {
                 if (b.blocks.length > 0) {
                     const childWrap = document.createElement('div');
                     childWrap.className = 'children';
-                    this._renderBlocks(b.blocks, childWrap, true);
+                    const perIter = this._countCommands(b.blocks);
+                    const childHighlight = isActive
+                        ? (highlightIdx - rangeStart) % perIter
+                        : undefined;
+                    this._renderBlocks(b.blocks, childWrap, true, 0, childHighlight);
                     el.appendChild(childWrap);
                 }
 
@@ -175,30 +206,45 @@ class PathBuilder {
     _startDrag(blocks, idx, el, parentEl, e) {
         if (this.dragState) return;
         const pos = e.touches ? e.touches[0] : e;
+        const isTouch = !!e.touches;
 
         this.dragState = {
             parent: blocks,
             parentEl,
             srcIdx: idx,
             tgtIdx: idx,
+            startX: pos.clientX,
             startY: pos.clientY,
             el,
             clone: null,
             marker: null,
             offY: 0,
+            pending: isTouch,
         };
 
-        document.addEventListener('mousemove', this._onMove);
-        document.addEventListener('mouseup', this._onEnd);
-        document.addEventListener('touchmove', this._onMove, { passive: false });
-        document.addEventListener('touchend', this._onEnd);
+        if (isTouch) {
+            document.addEventListener(
+                'touchmove', this._onMove, { passive: false });
+            document.addEventListener('touchend', this._onEnd);
+        } else {
+            document.addEventListener('mousemove', this._onMove);
+            document.addEventListener('mouseup', this._onEnd);
+        }
     }
 
     _dragMove(e) {
         const st = this.dragState;
         if (!st) return;
-        e.preventDefault();
         const pos = e.touches ? e.touches[0] : e;
+
+        /* pending threshold for touch: let scroll through until 8px */
+        if (st.pending) {
+            const dy = Math.abs(pos.clientY - st.startY);
+            if (dy < 8) return;
+            st.pending = false;
+        }
+
+        e.preventDefault();
 
         /* first move: hide source, create floating clone */
         if (!st.clone) {

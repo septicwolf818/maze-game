@@ -65,6 +65,7 @@ class Renderer {
                 cell.classList.add('enemy');
                 cell.dataset.enemyType = enemy.type;
                 cell.dataset.enemyDir = enemy.dir;
+                if (enemy.chasing) cell.classList.add('is-chasing');
 
                 const dirIcon = document.createElement('i');
                 const iconMap = {
