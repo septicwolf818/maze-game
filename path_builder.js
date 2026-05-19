@@ -21,6 +21,17 @@ class PathBuilder {
     }
 
     removeBlock(scope, index) {
+        const block = scope.blocks[index];
+        if (block.childScope) {
+            let s = this.activeScope;
+            while (s) {
+                if (s === block.childScope) {
+                    this.activeScope = scope;
+                    break;
+                }
+                s = s.parent;
+            }
+        }
         scope.blocks.splice(index, 1);
         this.render();
         this.onChange();
