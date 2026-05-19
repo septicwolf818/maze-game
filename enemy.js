@@ -32,7 +32,9 @@ class EnemyManager {
         for (let i = 0; i < chosen; i++) {
             const pos = pick();
             if (!pos) break;
-            this.enemies.push(new Enemy(pos.x, pos.y));
+            const enemy = new Enemy(pos.x, pos.y);
+            enemy.buildPatrolRoute(maze);
+            this.enemies.push(enemy);
         }
     }
 
@@ -52,46 +54,77 @@ class Enemy {
         this.x = x;
         this.y = y;
         this.dir = 'right';
-        this.dirs = ['up', 'right', 'down', 'left'];
-        this.moveVec = {
-            up: { dx: 0, dy: -1 },
-            down: { dx: 0, dy: 1 },
-            left: { dx: -1, dy: 0 },
-            right: { dx: 1, dy: 0 },
-        };
+        this.waypoints = [{ x, y }];
+        this.waypointIndex = 0;
     }
 
-    move(maze) {
-        const vec = this.moveVec[this.dir];
-        const nx = this.x + vec.dx;
-        const ny = this.y + vec.dy;
+    buildPatrolRoute(maze) {
+        const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+        const shuffled = [...dirs].sort(() => Math.random() - 0.5);
 
-        if (
-            ny >= 0 && ny < maze.length &&
-            nx >= 0 && nx < maze[0].length &&
-            maze[ny][nx] === CELL.PATH
-        ) {
-            this.x = nx;
-            this.y = ny;
-            return;
-        }
-
-        const available = this.dirs.filter(d => {
-            const v = this.moveVec[d];
-            const cx = this.x + v.dx;
-            const cy = this.y + v.dy;
-            return (
+        for (const [dy, dx] of shuffled) {
+            let cx = this.x + dx;
+            let cy = this.y + dy;
+            let steps = 0;
+            while (
                 cy >= 0 && cy < maze.length &&
                 cx >= 0 && cx < maze[0].length &&
-                maze[cy][cx] === CELL.PATH
+                maze[cy][cx] === CELL.PATH &&
+                steps < 6
+            ) {
+                cx += dx;
+                cy += dy;
+                steps++;
+            }
+
+            const endX = this.x + dx * steps;
+            const endY = this.y + dy * steps;
+            if (steps >= 2 && (endX !== this.x || endY !== this.y)) {
+                const route = [
+                    { x: this.x, y: this.y },
+                    { x: endX, y: endY },
+                ];
+                this.waypoints = route;
+                this.waypointIndex = 0;
+                return;
+            }
+        }
+
+        const neighbor = shuffled.find(([dy, dx]) => {
+            const nx = this.x + dx;
+            const ny = this.y + dy;
+            return (
+                ny >= 0 && ny < maze.length &&
+                nx >= 0 && nx < maze[0].length &&
+                maze[ny][nx] === CELL.PATH
             );
         });
+        if (neighbor) {
+            const [dy, dx] = neighbor;
+            this.waypoints = [
+                { x: this.x, y: this.y },
+                { x: this.x + dx, y: this.y + dy },
+            ];
+        }
+    }
 
-        if (available.length > 0) {
-            this.dir = available[Math.floor(Math.random() * available.length)];
-            const v = this.moveVec[this.dir];
-            this.x += v.dx;
-            this.y += v.dy;
+    move() {
+        const target = this.waypoints[this.waypointIndex];
+        if (!target) return;
+
+        const dx = Math.sign(target.x - this.x);
+        const dy = Math.sign(target.y - this.y);
+
+        if (dx > 0) this.dir = 'right';
+        else if (dx < 0) this.dir = 'left';
+        else if (dy > 0) this.dir = 'down';
+        else if (dy < 0) this.dir = 'up';
+
+        this.x += dx;
+        this.y += dy;
+
+        if (this.x === target.x && this.y === target.y) {
+            this.waypointIndex = (this.waypointIndex + 1) % this.waypoints.length;
         }
     }
 }

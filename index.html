@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maze Runner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="assets/icon/icon.png" type="image/png">
 </head>
@@ -15,9 +16,9 @@
                 <span id="status-msg">Generating maze...</span>
             </div>
             <div id="top-actions">
-                <button id="runBtn" class="btn btn-run">▶ Run</button>
-                <button id="resetBtn" class="btn btn-reset">⟲ Reset</button>
-                <button id="newMazeBtn" class="btn btn-new">✦ New</button>
+                <button id="runBtn" class="btn btn-run"><i class="fa-solid fa-play"></i> Run</button>
+                <button id="resetBtn" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                <button id="newMazeBtn" class="btn btn-new"><i class="fa-solid fa-shuffle"></i> New</button>
             </div>
         </header>
         <main id="main">
@@ -25,18 +26,29 @@
                 <div id="maze"></div>
             </section>
             <section id="builder-panel">
-                <div id="block-palette">
-                    <button class="block-btn forward" data-block="forward">↑ Forward</button>
-                    <button class="block-btn left" data-block="turnLeft">↰ Left</button>
-                    <button class="block-btn right" data-block="turnRight">↱ Right</button>
-                    <button class="block-btn repeat" data-block="repeat">⟳ Loop</button>
-                </div>
-                <div id="scope-indicator">
-                    Adding to: <span id="scope-label">Program</span>
-                </div>
                 <div id="program-area">
                     <div id="program-list"></div>
-                    <div id="program-placeholder">Add blocks to build your path</div>
+                    <div id="program-placeholder">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        Add blocks below to build your path
+                    </div>
+                </div>
+                <div id="block-palette">
+                    <button class="block-btn" data-block="forward">
+                        <i class="fa-solid fa-arrow-up"></i> Forward
+                    </button>
+                    <button class="block-btn" data-block="turnLeft">
+                        <i class="fa-solid fa-undo"></i> Left
+                    </button>
+                    <button class="block-btn" data-block="turnRight">
+                        <i class="fa-solid fa-redo"></i> Right
+                    </button>
+                    <button class="block-btn" data-block="wait">
+                        <i class="fa-solid fa-pause"></i> Wait
+                    </button>
+                    <button class="block-btn" data-block="repeat">
+                        <i class="fa-solid fa-repeat"></i> Loop
+                    </button>
                 </div>
             </section>
         </main>
