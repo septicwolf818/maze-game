@@ -178,6 +178,7 @@ class Game {
         this.character = { x: 0, y: 0, dir: 'right' };
         this.stopped = true;
         this.setBlocked(false);
+        this.enemyManager.reset();
         this.renderer.render(this.maze, this.character, this.enemyManager.enemies);
         this.setStatus('Build your path and press Run', '');
     }

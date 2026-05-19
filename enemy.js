@@ -35,6 +35,7 @@ class EnemyManager {
             if (!pos) break;
             const enemy = new Enemy(pos.x, pos.y, types[i % types.length]);
             enemy.buildPatrolRoute(maze);
+            enemy.saveInitialState();
             this.enemies.push(enemy);
         }
     }
@@ -48,6 +49,12 @@ class EnemyManager {
     checkCollision(character) {
         return this.enemies.some(e => e.x === character.x && e.y === character.y);
     }
+
+    reset() {
+        for (const enemy of this.enemies) {
+            enemy.resetState();
+        }
+    }
 }
 
 class Enemy {
@@ -58,6 +65,22 @@ class Enemy {
         this.dir = 'right';
         this.waypoints = [{ x, y }];
         this.waypointIndex = 0;
+    }
+
+    saveInitialState() {
+        this.startX = this.x;
+        this.startY = this.y;
+        this.startDir = this.dir;
+        this.startWaypoints = this.waypoints.map(w => ({ ...w }));
+        this.startWaypointIndex = this.waypointIndex;
+    }
+
+    resetState() {
+        this.x = this.startX;
+        this.y = this.startY;
+        this.dir = this.startDir;
+        this.waypoints = this.startWaypoints.map(w => ({ ...w }));
+        this.waypointIndex = this.startWaypointIndex;
     }
 
     buildPatrolRoute(maze) {
