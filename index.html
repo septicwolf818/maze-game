@@ -1,49 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZSTIB Brzesko | MAZE-GAME</title>
-    <link rel="stylesheet" type="text/css"
-        href="http://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=latin,latin-ext" />
+    <title>Maze Runner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="assets/icon/icon.png" type="image/png">
-    <script src="maze_generator.js"></script>
-    <script src="maze_runner.js"></script>
-    <script>
-
-    </script>
 </head>
-
 <body>
-    <div id="container">
-        <div id="control">
-            <div id="list">Select commands</div>
-            <div id="options">
-                <div id="left" class="option">&#8634;</div>
-                <div id="right" class="option">&#8635;</div>
-                <div id="forward" class="option">&#8594;</div>
-                <div id="reset" class="option reset">&#10005;</div>
-                <div id="run" class="option run">&#9166;</div>
+    <div id="app">
+        <header id="topbar">
+            <h1>MAZE RUNNER</h1>
+            <div id="status-bar">
+                <span id="status-msg">Generating maze...</span>
             </div>
-        </div>
-        <div id="show"></div>
+            <div id="top-actions">
+                <button id="runBtn" class="btn btn-run"><i class="fa-solid fa-play"></i> <span class="btn-label">Run</span></button>
+                <button id="resetBtn" class="btn btn-reset"><i class="fa-solid fa-rotate-left"></i> <span class="btn-label">Reset</span></button>
+                <button id="newMazeBtn" class="btn btn-new"><i class="fa-solid fa-shuffle"></i> <span class="btn-label">New</span></button>
+            </div>
+        </header>
+        <main id="main">
+            <section id="maze-panel">
+                <div id="maze"></div>
+            </section>
+            <section id="builder-panel">
+                <div id="enemy-legend">
+                    <span class="legend-item" data-type="patrol">
+                        <span class="legend-dot patrol"></span> Patrol
+                    </span>
+                    <span class="legend-item" data-type="chaser">
+                        <span class="legend-dot chaser"></span> Chaser
+                    </span>
+                    <span class="legend-item" data-type="jumper">
+                        <span class="legend-dot jumper"></span> Jumper
+                    </span>
+                    <i class="fa-solid fa-arrow-right" style="color:var(--text-dim);font-size:10px;margin-left:auto;opacity:0.5"></i>
+                    <button id="expandBtn" class="expand-btn" title="Full editor">
+                        <i class="fa-solid fa-expand"></i>
+                    </button>
+                </div>
+                <div id="program-area">
+                    <div id="program-list"></div>
+                    <div id="program-placeholder">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        Add blocks below to build your path
+                    </div>
+                </div>
+                <div id="block-palette">
+                    <button class="block-btn" data-block="forward">
+                        <i class="fa-solid fa-arrow-up"></i> Forward
+                    </button>
+                    <button class="block-btn" data-block="turnLeft">
+                        <i class="fa-solid fa-undo"></i> Left
+                    </button>
+                    <button class="block-btn" data-block="turnRight">
+                        <i class="fa-solid fa-redo"></i> Right
+                    </button>
+                    <button class="block-btn" data-block="wait">
+                        <i class="fa-solid fa-pause"></i> Wait
+                    </button>
+                    <button class="block-btn" data-block="repeat">
+                        <i class="fa-solid fa-repeat"></i> Repeat
+                    </button>
+                </div>
+            </section>
+        </main>
     </div>
-
+    <script src="maze_generator.js"></script>
+    <script src="enemy.js"></script>
+    <script src="renderer.js"></script>
+    <script src="path_builder.js"></script>
+    <script src="game.js"></script>
     <script>
-        const state = {
-            blocked: false,
-            character: {
-                y: 0,
-                x: 0,
-                dir: "right",
-            },
-            steps: ""
-        };
-        const mazeGenerator = new MazeGenerator(state);
-        const mazeRunner = new MazeRunner(mazeGenerator);
+        window.game = new Game();
     </script>
 </body>
-
 </html>
